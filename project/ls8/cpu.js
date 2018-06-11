@@ -28,13 +28,13 @@ class CPU {
         this.ram = ram;
 
         this.reg = new Array(8).fill(0); // General-purpose registers R0-R7
-        
+
         // Special-purpose registers
         this.PC = 0; // Program Counter
 
         this.reg[SP] = 0xf4; //0xf4 address for key pressed with 'keyboard interrupt'
     }
-    
+
     /**
      * Store value in memory address, useful for program loading
      */
@@ -74,11 +74,11 @@ class CPU {
         switch (op) {
             case 'MUL':
                 // !!! IMPLEMENT ME
-                this.reg[regA] = this.reg[regA] * this.reg[regB]; 
+                this.reg[regA] = this.reg[regA] * this.reg[regB];
                 break;
-            case 'ADD': 
-            this.reg[regA] = this.reg[regA] + this.reg[regB]; 
-            break; 
+            case 'ADD':
+                this.reg[regA] = this.reg[regA] + this.reg[regB];
+                break;
         }
     }
 
@@ -92,7 +92,7 @@ class CPU {
         // right now.)
 
         // !!! IMPLEMENT ME
-
+        let IR = this.ram.read(this.PC); //instruction register
         // Debugging output
         //console.log(`${this.PC}: ${IR.toString(2)}`);
 
@@ -100,18 +100,70 @@ class CPU {
         // needs them.
 
         // !!! IMPLEMENT ME
+        let operandA = this.ram.read(this.PC + 1); //byte 1
+        let operandB = this.ram.read(this.PC + 2); //byte 2
 
         // Execute the instruction. Perform the actions for the instruction as
         // outlined in the LS-8 spec.
 
         // !!! IMPLEMENT ME
+        const branchTable = {
+            [LDI]: handle_LDI,
+            [ADD]: handle_ADD,
+            [MUL]: handle_MUL,
+            [POP]: handle_POP,
+            [PUSH]: handle_PUSH,
+            [PRN]: handle_PRN,
+            [HLT]: handle_HLT,
+            [CALL]: handle_CALL,
+            [RET]: handle_RET
+        };
 
+        const handle_LDI = (operandA, operandB) => {
+            this.reg[operandA] = operandB;
+        };
+        const handle_ADD = (operandA, operandB) => {
+            this.alu('ADD', operandA, operandB);
+        };
+        const handle_MUL = (operandA, operandB) => {
+            this.alu('MUL', operandA, operandB);
+        };
+        const handle_POP = operA => {
+            this.reg[operA] = this.ram.read(this.reg[SP]);
+            this.reg[SP]++;
+        };
+        const handle_PUSH = operA => {
+            this.reg[SP] = this.reg[SP] - 1;
+            this.ram.write(this.reg[SP], this.reg[operA]);
+        };
+        const handle_PRN = operandA => {
+            console.log(this.reg[operandA]);
+        };
+        const handle_HLT = () => {
+            this.stopClock();
+        };
+        const handle_CALL = operA => {
+            this.reg[SP] = this.reg[SP] - 1;
+            this.ram.write(this.reg[SP], this.PC + 2);
+            return this.reg[operA];
+        };
+        const handle_RET = () => {
+            const value = this.ram.read(this.reg[SP]);
+            this.reg[SP]++;
+            return value;
+        };
         // Increment the PC register to go to the next instruction. Instructions
         // can be 1, 2, or 3 bytes long. Hint: the high 2 bits of the
         // instruction byte tells you how many bytes follow the instruction byte
         // for any particular instruction.
-        
+
         // !!! IMPLEMENT ME
+        const returnHandler = branchTable[IR](operandA, operandB);
+        if (returnHandler === undefined) {
+            this.PC += (IR >>> 6) + 1;
+          } else {
+            this.PC = returnHandler;
+          }
     }
 }
 
