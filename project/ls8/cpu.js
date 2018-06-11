@@ -74,7 +74,11 @@ class CPU {
         switch (op) {
             case 'MUL':
                 // !!! IMPLEMENT ME
+                this.reg[regA] = this.reg[regA] * this.reg[regB]; 
                 break;
+            case 'ADD': 
+            this.reg[regA] = this.reg[regA] + this.reg[regB]; 
+            break; 
         }
     }
 
