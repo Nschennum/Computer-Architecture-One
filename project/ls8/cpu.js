@@ -1,6 +1,20 @@
 /**
  * LS-8 v2.0 emulator skeleton code
  */
+let SP = 0x07; //Stack position 0x07-holding value/invalid character
+
+//CPU operation codes
+const ADD = 0b10101000;
+const MUL = 0b10101010;
+const LDI = 0b10011001; //register immediate
+const CALL = 0b01001000;//call register-calls address
+const HLT = 0b00000001; //halt CPU (exit emulator)
+const PRN = 0b01000011; //register pseudo-instruction
+
+const POP = 0b01001100;
+const PUSH = 0b01001101; //push register
+
+const RET = 0b00001001; //return from subroutine
 
 /**
  * Class for simulating a simple Computer (CPU & memory)
@@ -17,6 +31,8 @@ class CPU {
         
         // Special-purpose registers
         this.PC = 0; // Program Counter
+
+        this.reg[SP] = 0xf4; //0xf4 address for key pressed with 'keyboard interrupt'
     }
     
     /**
@@ -50,8 +66,10 @@ class CPU {
      * If you have an instruction that does math, i.e. MUL, the CPU would hand
      * it off to it's internal ALU component to do the actual work.
      *
-     * op can be: ADD SUB MUL DIV INC DEC CMP
+     * op can be: ADD SUB MUL DIV INC DEC CMP etc. 
      */
+
+
     alu(op, regA, regB) {
         switch (op) {
             case 'MUL':
