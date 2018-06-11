@@ -13,7 +13,7 @@ class RAM {
     write(MAR, MDR) {
         // !!! IMPLEMENT ME
         // write the value in the MDR to the address MAR
-        ths.mem[MAR] = MDR; 
+        this.mem[MAR] = MDR; 
     }
 
     /**
