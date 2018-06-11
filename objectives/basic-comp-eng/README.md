@@ -189,44 +189,68 @@ phone. If no one is available, any house plant will do.
 (The answers to the below questions aren't necessarily in the above text.)
 
 * In industry terms, how many months does it take for the number of transistors
-  on a chip to double?
+  on a chip to double? Moore's Law: 18 months
 
 * Why are registers necessary? Why not use RAM?
+Registers are faster and more efficients because they use addresses etc. 
 
 * Why is cache useful?
+Bigger and slower than registers; its a bufferzone btw slow RAM and CPU
 
 * Why are interrupts useful?
+They help prevent hangup loops, providing a way to cancel a code command 
 
 * What are some examples of interrupts that might occur?
+Higher priority tasks taking precidence 
 
 * Describe what a CPU word is.
+data/instruction 
 
 * Describe what the system bus is and what size it is.
+Data thoughput or pipeline that the clock cycle processes  (size 32 or 64) 
 
 * Describe what a CPU instruction is.
+data/address registering code instructing CPU to execute a task
 
 * Describe what the CPU clock represents.
+stepwise time to execute a cycle
 
 * Describe what a CPU interrupt is.
+a interupting transition from one task in the CPU to another
 
 * Describe what kinds of pins enter and exit the CPU.
+Land Grid Arrays (LGAs) and Pin Grid Arrays(PGAs) are motherboard contacts that enter and exit
 
 * Describe what DMA is.
+Direct Memory Access(DMA)
+Allows certain hairdware to access RAM regardless of CPU
 
 * Say which peripherals are connected to the DMA bus.
+Disk drive, graphics cards, network cards, sound cards
 
-* Say which peripherals are connected to the I/O bus.
+* Say which peripherals are connected to the I/O bus.  
+USB/mouse/keyboard etc.
 
 * Describe what L1, L2, and L3 caches are.
+Pre-RAM storage that do similar jobs, getting larger and slower as the numbers go up.
 
 * Describe caching and storage from L1 through cloud storage.
+-L cache is fastest and most expensive, for small pieces of semi temporary data
+-RAM is a little slower but large, complex and funcitonal; volitile data stored here
+-Solid State Storage is for long tern storage, a little slower to access
+-iCloud is large storage space that is not stored on your personal computer, can be accessed from any device, but is the slowest data to access because data is saved on remote servers
 
 * Describe what RAM is and its reponsibility in the system.
+RAM is the cache between the HDD or SSD and the L caches.
 
 * Describe what the hard disk is and its responsibility in the system.
+Permanent large storage(as long as files don't get danaged and data can be accessed). 
 
 * Describe what the network interface card is responsible for in the system.
+It allows you to locally connect to WAN/LAN(WPS) internet or other devices. 
 
 * Describe what the graphics card is responsible for in the system.
+It allows you to render graphics. 
 
 * Suggest the role that graphics cards play in machine learning.
+Graphics cards have thousands of cores that can simulate 'learning' by initiating new connections based on previous connection input and response data generated. 
