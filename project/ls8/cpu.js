@@ -4,13 +4,12 @@
 let SP = 0x07; //Stack position 0x07-holding value/invalid character
 
 //CPU operation codes
+const LDI = 0b10011001; //register immediate
+const PRN = 0b01000011; //register pseudo-instruction
+const HLT = 0b00000001; //halt CPU (exit emulator)
 const ADD = 0b10101000;
 const MUL = 0b10101010;
-const LDI = 0b10011001; //register immediate
 const CALL = 0b01001000;//call register-calls address
-const HLT = 0b00000001; //halt CPU (exit emulator)
-const PRN = 0b01000011; //register pseudo-instruction
-
 const POP = 0b01001100;
 const PUSH = 0b01001101; //push register
 
@@ -94,7 +93,7 @@ class CPU {
         // !!! IMPLEMENT ME
         let IR = this.ram.read(this.PC); //instruction register
         // Debugging output
-        //console.log(`${this.PC}: ${IR.toString(2)}`);
+        console.log(`${this.PC}: ${IR.toString(2)}`);
 
         // Get the two bytes in memory _after_ the PC in case the instruction
         // needs them.
@@ -107,17 +106,27 @@ class CPU {
         // outlined in the LS-8 spec.
 
         // !!! IMPLEMENT ME
-        const branchTable = {
-            [LDI]: handle_LDI,
-            [ADD]: handle_ADD,
-            [MUL]: handle_MUL,
-            [POP]: handle_POP,
-            [PUSH]: handle_PUSH,
-            [PRN]: handle_PRN,
-            [HLT]: handle_HLT,
-            [CALL]: handle_CALL,
-            [RET]: handle_RET
-        };
+        //   switch(IR) {
+        //       case LDI: 
+        //       //set value in register
+        //       this.reg[operandA] = operandB;
+        //       this.PC += 3; //Next instruction
+        //       break; 
+
+        //       case PRN: 
+        //       console.log(this.reg[operandA]); 
+        //       this.PC += 2; 
+        //       break; 
+
+        //       case HLT: 
+        //       this.stopClock(); 
+        //       this.PC += 1; 
+
+        //       default: 
+        //       console.log("Unknown instruciton: " + IR.toString(2)); 
+        //       this.stopClock(); 
+        //       return; 
+        //   }
 
         const handle_LDI = (operandA, operandB) => {
             this.reg[operandA] = operandB;
@@ -152,18 +161,32 @@ class CPU {
             this.reg[SP]++;
             return value;
         };
+
+        const branchTable = {
+            [LDI]: handle_LDI,
+            [ADD]: handle_ADD,
+            [MUL]: handle_MUL,
+            [POP]: handle_POP,
+            [PUSH]: handle_PUSH,
+            [PRN]: handle_PRN,
+            [HLT]: handle_HLT,
+            [CALL]: handle_CALL,
+            [RET]: handle_RET
+        };
+
         // Increment the PC register to go to the next instruction. Instructions
         // can be 1, 2, or 3 bytes long. Hint: the high 2 bits of the
         // instruction byte tells you how many bytes follow the instruction byte
         // for any particular instruction.
 
+
         // !!! IMPLEMENT ME
         const returnHandler = branchTable[IR](operandA, operandB);
         if (returnHandler === undefined) {
             this.PC += (IR >>> 6) + 1;
-          } else {
+        } else {
             this.PC = returnHandler;
-          }
+        }
     }
 }
 
