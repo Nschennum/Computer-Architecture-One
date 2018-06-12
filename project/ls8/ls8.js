@@ -1,25 +1,43 @@
 const RAM = require('./ram');
 const CPU = require('./cpu');
 const fs = require('fs');
-const filename = process.argv[2];
 
+const args = process.argv;
+
+if (args.length != 3) {
+    if (args.length === 2) console.error(' Missing argument: \n\n     provide a file to run')
+    if (args.length > 3) console.error(' Too many arguments: \n\n     can only handle one file')
+    process.exit();
+}
 /**
  * Load an LS8 program into memory
  *
  * TODO: load this from a file on disk instead of having it hardcoded
  */
 function loadMemory() {
-
     // Hardcoded program to print the number 8 on the console
+    try {
+        const regexp = /[0-9]{8}/gi;
+        const program = fs.readFileSync(`${args[2]}`, "utf-8").match(regexp);
 
-    const program = [ // print8.ls8
-        "10011001", // LDI R0,8  Store 8 into R0
-        "00000000",
-        "00001000",
-        "01000011", // PRN R0    Print the value in R0
-        "00000000",
-        "00000001"  // HLT       Halt and quit
-    ];
+        //Load the program into the CPU's memory a byte at a time
+        for (let i = 0; i < program.length; i++) {
+            cpu.poke(i, parseInt(program[i], 2));
+        }
+    }
+    catch (err) {
+        console.log('invalid file, try again');
+        process.exit();
+    }
+}
+
+    //     "10011001", // LDI R0,8  Store 8 into R0
+    //     "00000000",
+    //     "00001000",
+    //     "01000011", // PRN R0    Print the value in R0
+    //     "00000000",
+    //     "00000001"  // HLT       Halt and quit
+    // ];
 
     // const program = fs
     //     .readFileSync(filename)
@@ -33,10 +51,7 @@ function loadMemory() {
     //     }, []);
 
     // Load the program into the CPU's memory a byte at a time
-    for (let i = 0; i < program.length; i++) {
-        cpu.poke(i, parseInt(program[i], 2));
-    }
-}
+
 
 /**
  * Main
@@ -50,3 +65,4 @@ let cpu = new CPU(ram);
 loadMemory(cpu);
 
 cpu.startClock();
+ //node ls8 print8.ls8
