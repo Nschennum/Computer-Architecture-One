@@ -7,12 +7,14 @@ let SP = 0x07; //Stack position 0x07-holding value/invalid character
 const LDI = 0b10011001; //register immediate
 const PRN = 0b01000011; //register pseudo-instruction
 const HLT = 0b00000001; //halt CPU (exit emulator)
+
 const ADD = 0b10101000;
 const MUL = 0b10101010;
-const CALL = 0b01001000;//call register-calls address
+
 const POP = 0b01001100;
 const PUSH = 0b01001101; //push register
 
+const CALL = 0b01001000;//call register-calls address
 const RET = 0b00001001; //return from subroutine
 
 /**
@@ -136,12 +138,23 @@ class CPU {
         const handle_LDI = (operandA, operandB) => {
             this.reg[operandA] = operandB;
         };
+        //kindly prints our returned data
+        const handle_PRN = operandA => {
+            console.log(this.reg[operandA]);
+        };
+        const handle_HLT = () => {
+            this.stopClock();
+        };
+
+        // handle math operations by calling alu
         const handle_ADD = (operandA, operandB) => {
             this.alu('ADD', operandA, operandB);
         };
         const handle_MUL = (operandA, operandB) => {
             this.alu('MUL', operandA, operandB);
         };
+
+        //PUSH and POP handle stack instructions 
         const handle_POP = operA => {
             this.reg[operA] = this.ram.read(this.reg[SP]);
             this.reg[SP]++;
@@ -150,12 +163,8 @@ class CPU {
             this.reg[SP] = this.reg[SP] - 1;
             this.ram.write(this.reg[SP], this.reg[operA]);
         };
-        const handle_PRN = operandA => {
-            console.log(this.reg[operandA]);
-        };
-        const handle_HLT = () => {
-            this.stopClock();
-        };
+       
+        //subroutine calls to CALL TO and memory location and RETurn from 
         const handle_CALL = operA => {
             this.reg[SP] = this.reg[SP] - 1;
             this.ram.write(this.reg[SP], this.PC + 2);
@@ -169,12 +178,12 @@ class CPU {
 
         const branchTable = {
             [LDI]: handle_LDI,
+            [PRN]: handle_PRN,
+            [HLT]: handle_HLT,
             [ADD]: handle_ADD,
             [MUL]: handle_MUL,
             [POP]: handle_POP,
             [PUSH]: handle_PUSH,
-            [PRN]: handle_PRN,
-            [HLT]: handle_HLT,
             [CALL]: handle_CALL,
             [RET]: handle_RET
         };
