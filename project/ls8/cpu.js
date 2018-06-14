@@ -85,6 +85,8 @@ class CPU {
         }
     }
 
+   interruptEnabled() {}; 
+   interruptHappened() {}; 
     /**
      * Advances the CPU one cycle
      */
@@ -93,7 +95,11 @@ class CPU {
         // from the memory address pointed to by the PC. (I.e. the PC holds the
         // index into memory of the instruction that's about to be executed
         // right now.)
-
+        if (interruptEnabled) {
+            if (interruptHappened){
+                RET(this.PC) = 
+            }
+        }
         // !!! IMPLEMENT ME
         let IR = this.ram.read(this.PC); //instruction register
         // Debugging output
