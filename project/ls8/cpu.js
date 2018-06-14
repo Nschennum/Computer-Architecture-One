@@ -17,6 +17,7 @@ const PUSH = 0b01001101; //push register
 const CALL = 0b01001000;//call register-calls address
 const RET = 0b00001001; //return from subroutine
 
+const JMP = 0b01010000;
 /**
  * Class for simulating a simple Computer (CPU & memory)
  */
@@ -32,7 +33,7 @@ class CPU {
 
         // Special-purpose registers
         this.PC = 0; // Program Counter
-
+    //Reg7(pointer) points to F4 in stack
         this.reg[SP] = 0xf4; //0xf4 address for key pressed with 'keyboard interrupt'
     }
 
