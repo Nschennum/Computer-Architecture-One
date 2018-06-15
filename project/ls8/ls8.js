@@ -15,7 +15,7 @@ const fs = require('fs');
 function loadMemory(cpu, filename) {
     const content = fs.readFileSync(filename, 'utf-8');
     //console.log(line); 
-    const lines = content.trim().split(/[\r\n]+/g);
+    const lines = content.trim().split(/[\r\n]+/g); //trims out hidden characters like carriage returns and linefeeds 
     program = [];
 
     for (let line of lines) {

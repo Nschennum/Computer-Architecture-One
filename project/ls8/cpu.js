@@ -17,7 +17,10 @@ const PUSH = 0b01001101; //push register
 const CALL = 0b01001000;//call register-calls address
 const RET = 0b00001001; //return from subroutine
 
+const CMP = 0b10100000;
 const JMP = 0b01010000;
+const JEQ = 0b01010001;
+const JNE = 0b01010010;
 /**
  * Class for simulating a simple Computer (CPU & memory)
  */
@@ -33,7 +36,13 @@ class CPU {
 
         // Special-purpose registers
         this.PC = 0; // Program Counter
-    //Reg7(pointer) points to F4 in stack
+        // this.E = 0; //the Equals Flag
+        // this.L = 0; //the Less than Flag
+        // this.G = 0; //the Greater than flag
+
+        this.FL = 0;
+
+        //Reg7(pointer) points to F4 in stack
         this.reg[SP] = 0xf4; //0xf4 address for key pressed with 'keyboard interrupt'
     }
 
@@ -82,11 +91,12 @@ class CPU {
             case 'ADD':
                 this.reg[regA] = this.reg[regA] + this.reg[regB];
                 break;
+
         }
     }
 
-   interruptEnabled() {}; 
-   interruptHappened() {}; 
+    //    interruptEnabled() {}; 
+    //    interruptHappened() {}; 
     /**
      * Advances the CPU one cycle
      */
@@ -95,11 +105,11 @@ class CPU {
         // from the memory address pointed to by the PC. (I.e. the PC holds the
         // index into memory of the instruction that's about to be executed
         // right now.)
-        if (interruptEnabled) {
-            if (interruptHappened){
-                RET(this.PC) = 
-            }
-        }
+        // if (interruptEnabled) {
+        //     if (interruptHappened){
+        //         RET(this.PC) = 
+        //     }
+        // }
         // !!! IMPLEMENT ME
         let IR = this.ram.read(this.PC); //instruction register
         // Debugging output
@@ -170,7 +180,7 @@ class CPU {
             this.reg[SP] = this.reg[SP] - 1;
             this.ram.write(this.reg[SP], this.reg[operA]);
         };
-       
+
         //subroutine calls to CALL TO and memory location and RETurn from 
         const handle_CALL = operA => {
             this.reg[SP] = this.reg[SP] - 1;
@@ -182,6 +192,29 @@ class CPU {
             this.reg[SP]++;
             return value;
         };
+        const handle_CMP = () => {
+            if (this.reg[operandA] < this.reg[operandB]) {
+                this.FL = 0b00000100; //L(lessThan)= 1
+            } else if (this.reg[operandA] > this.reg[operandB]) {
+                this.FL = 0b00000010; //G(greaterThan)=1
+            } else if (this.reg[operandA] === this.reg[operandB]) {
+                this.FL = 0b00000001; //if E FL=> 0
+            }
+        };
+        const handle_JMP = () => {
+            this.PC = this.ram.read(this.PC + 1);
+        };
+        const handle_JEQ = () => {
+            if (this.FL === 0b00000001) {
+                return (this.PC = this.reg[operandA]);
+            }
+        };
+        const handle_JNE = () => {
+            if (this.FL !== 0b00000001) {
+                return (this.PC = this.reg[operandA]);
+            }
+        };
+
 
         const branchTable = {
             [LDI]: handle_LDI,
@@ -192,7 +225,11 @@ class CPU {
             [POP]: handle_POP,
             [PUSH]: handle_PUSH,
             [CALL]: handle_CALL,
-            [RET]: handle_RET
+            [RET]: handle_RET,
+            [CMP]: handle_CMP,
+            [JMP]: handle_JMP,
+            [JEQ]: handle_JEQ,
+            [JNE]: handle_JNE
         };
 
         // Increment the PC register to go to the next instruction. Instructions
