@@ -241,7 +241,7 @@ class CPU {
         // !!! IMPLEMENT ME
         const returnHandler = branchTable[IR](operandA, operandB);
         if (returnHandler === undefined) {
-            this.PC += (IR >>> 6) + 1;
+            this.PC += (IR >>> 6) + 1; //bit shifts to the next instruciton 
         } else {
             this.PC = returnHandler;
         }
